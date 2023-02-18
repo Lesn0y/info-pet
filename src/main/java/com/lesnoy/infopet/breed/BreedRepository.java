@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface BreedRepository extends JpaRepository<Breed, Integer> {
 
-    Page<List<Breed>> findBreedsByAnimalId(int animalId, Pageable pageable);
+    List<Breed> findAllByNameContains(String query);
+
+    Page<List<Breed>> findAllByAnimalId(Integer animalId, Pageable pageable);
 
     Page<List<Breed>> findBreedsByAnimalIdAndFiltersIsIn(int animalId,
-                                                        List<Filter> filters,
-                                                        Pageable pageable);
+                                                         List<Filter> filters,
+                                                         Pageable pageable);
 }

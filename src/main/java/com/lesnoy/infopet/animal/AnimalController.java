@@ -15,9 +15,9 @@ public class AnimalController {
     private final AnimalRepository repository;
 
     @GetMapping("/{id}")
-    @Operation(description = "Получить фильтры и название живлтного по ID")
+    @Operation(description = "Get filters and animal name by ID")
     public ResponseEntity<Animal> getAnimal(
-            @PathVariable("id") @Parameter(name = "ID животного") int id) {
+            @PathVariable("id") @Parameter(name = "animal ID") int id) {
         return ResponseEntity.ok(repository.findById(id)
                 .orElseThrow(RuntimeException::new));
     }

@@ -13,29 +13,36 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://127.0.0.1:4200")
 @RestController
-@RequestMapping("/api/v1/breeds")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class BreedController {
 
-    private final BreedRepository repository;
     private final BreedService service;
 
-    @GetMapping
-    @Operation(description = "Получить животных по id и фильтрам")
-    public ResponseEntity<Page<List<Breed>>> findWithFilters(
-            @RequestParam(value = "animal", required = false) @Parameter(description = "ID животного") int id,
-            @RequestParam(value = "q", required = false) @Parameter(description = "Поисковой запрос") String query,
-            @RequestParam(value = "filters", required = false) @Parameter(description = "Список фильров разделяемых заяптой, если параметр отсуствует, вернуться все") String filters,
-            @RequestParam(value = "page", required = false, defaultValue = "0") @Parameter(description = "Номер страницы пагинации, начиная с 0") Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "12")  @Parameter(description = "Количество элементов на странице, дефолтное значение 12")Integer size) {
-        return ResponseEntity.ok(
-                service.getBreedsWithFilters(id, filters, page, size));
+    @GetMapping("/breeds")
+    @Operation(description = "Get all breeds with name = 'q'")
+    public ResponseEntity<List<Breed>> findAllBreedsByName(
+            @RequestParam(value = "q")
+            @Parameter(description = "Query with breed name") String query) {
+        return ResponseEntity.ok(service.findBreedsWithName(query));
     }
 
-    @GetMapping("/{id}")
-    @Operation(description = "Получить конкретную пароду по id")
-    public ResponseEntity<Optional<Breed>> getBreedById(
-            @PathVariable("id") @Parameter(description = "ID пароды") int id) {
-        return ResponseEntity.ok(repository.findById(id));
+    @GetMapping("/breeds/{id}")
+    @Operation(description = "Get breed by id")
+    public ResponseEntity<?> getBreedById(
+            @PathVariable("id") Integer breedId) {
+        Optional<Breed> breed = service.findBreedById(breedId);
+        return breed.isPresent() ? ResponseEntity.ok(breed.get()) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{animal_id}/breeds")
+    @Operation(description = "Get breed by animal id with filters(optional)")
+    public ResponseEntity<Page<List<Breed>>> findBreeds(
+            @PathVariable("animal_id") Integer animalId,
+            @RequestParam(value = "filters", required = false) String filters,
+            @RequestParam(value = "page", required = false) @Parameter(description = "OPTIONAL, zero-based page index") Integer page,
+            @RequestParam(value = "size", required = false) @Parameter(description = "OPTIONAL, the size of the page to be returned") Integer size) {
+        return ResponseEntity.ok(service.findBreedsWithFilters(animalId, filters, page, size));
+    }
+
 }
