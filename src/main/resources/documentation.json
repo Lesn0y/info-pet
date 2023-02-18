@@ -16,18 +16,17 @@
     }
   ],
   "paths": {
-    "/api/v1/breeds": {
+    "/api/v1/{animal_id}/breeds": {
       "get": {
         "tags": [
           "breed-controller"
         ],
-        "description": "Получить животных по id и фильтрам",
-        "operationId": "findWithFilters",
+        "description": "Get breed by animal id with filters(optional)",
+        "operationId": "findBreeds",
         "parameters": [
           {
-            "name": "animal",
-            "in": "query",
-            "description": "ID животного",
+            "name": "animal_id",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
@@ -37,7 +36,6 @@
           {
             "name": "filters",
             "in": "query",
-            "description": "Список фильров разделяемых заяптой, если параметр отсуствует, вернуться все",
             "required": false,
             "schema": {
               "type": "string"
@@ -46,23 +44,21 @@
           {
             "name": "page",
             "in": "query",
-            "description": "Номер страницы пагинации, начиная с 0",
+            "description": "OPTIONAL, zero-based page index",
             "required": false,
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 0
+              "format": "int32"
             }
           },
           {
             "name": "size",
             "in": "query",
-            "description": "Количество элементов на странице, дефолтное значение 12",
+            "description": "OPTIONAL, the size of the page to be returned",
             "required": false,
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 12
+              "format": "int32"
             }
           }
         ],
@@ -80,18 +76,52 @@
         }
       }
     },
+    "/api/v1/breeds": {
+      "get": {
+        "tags": [
+          "breed-controller"
+        ],
+        "description": "Get all breeds with name = 'q'",
+        "operationId": "findAllBreedsByName",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Query with breed name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Breed"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/breeds/{id}": {
       "get": {
         "tags": [
           "breed-controller"
         ],
-        "description": "Получить конкретную пароду по id",
+        "description": "Get breed by id",
         "operationId": "getBreedById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID пароды",
             "required": true,
             "schema": {
               "type": "integer",
@@ -105,7 +135,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/Breed"
+                  "type": "object"
                 }
               }
             }
@@ -118,11 +148,11 @@
         "tags": [
           "animal-controller"
         ],
-        "description": "Получить фильтры и название живлтного по ID",
+        "description": "Get filters and animal name by ID",
         "operationId": "getAnimal",
         "parameters": [
           {
-            "name": "ID животного",
+            "name": "animal ID",
             "in": "path",
             "required": true,
             "schema": {
