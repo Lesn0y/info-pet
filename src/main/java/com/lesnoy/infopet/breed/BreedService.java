@@ -5,6 +5,7 @@ import com.lesnoy.infopet.filter.FilterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,18 +32,20 @@ public class BreedService {
     }
 
     @Transactional
-    public Page<List<Breed>> findBreedsWithFilters(
+    public List<Breed> findBreedsWithFilters(
             int animalId,
-            String filters,
-            int page, int size) {
-        if (filters != null) {
-            List<Filter> filterList = filterRepository.findAllById(
-                    Arrays.stream(filters
-                                    .split(","))
-                            .map(Integer::parseInt)
-                            .collect(Collectors.toSet()));
-            return breedRepository.findBreedsByAnimalIdAndFiltersIsIn(animalId, filterList, PageRequest.of(page,size));
-        }
+            String filters) {
+
+        List<Filter> filterList = filterRepository.findAllById(
+                Arrays.stream(filters
+                                .split(","))
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toSet()));
+        return breedRepository.findBreedsByAnimalIdAndFiltersIsIn(animalId, filterList);
+
+    }
+
+    public Page<List<Breed>> findBreedsPageable(Integer animalId, Integer page, Integer size) {
         return breedRepository.findAllByAnimalId(animalId, PageRequest.of(page, size));
     }
 }

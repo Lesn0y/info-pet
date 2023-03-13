@@ -37,12 +37,15 @@ public class BreedController {
 
     @GetMapping("/{animal_id}/breeds")
     @Operation(description = "Get breed by animal id with filters(optional)")
-    public ResponseEntity<Page<List<Breed>>> findBreeds(
+    public ResponseEntity<?> findBreeds(
             @PathVariable("animal_id") Integer animalId,
             @RequestParam(value = "filters", required = false) String filters,
             @RequestParam(value = "page", required = false) @Parameter(description = "OPTIONAL, zero-based page index") Integer page,
             @RequestParam(value = "size", required = false) @Parameter(description = "OPTIONAL, the size of the page to be returned") Integer size) {
-        return ResponseEntity.ok(service.findBreedsWithFilters(animalId, filters, page, size));
+        if (filters != null) {
+            return ResponseEntity.ok(service.findBreedsWithFilters(animalId, filters));
+        }
+        return ResponseEntity.ok(service.findBreedsPageable(animalId, page, size));
     }
 
 }

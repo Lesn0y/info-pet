@@ -13,7 +13,6 @@ public interface BreedRepository extends JpaRepository<Breed, Integer> {
 
     Page<List<Breed>> findAllByAnimalId(Integer animalId, Pageable pageable);
 
-    Page<List<Breed>> findBreedsByAnimalIdAndFiltersIsIn(int animalId,
-                                                         List<Filter> filters,
-                                                         Pageable pageable);
+    List<Breed> findBreedsByAnimalIdAndFiltersIsIn(int animalId, List<Filter> filters);
+
 }
